@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		9847F9501DBE0DAA00A18965 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9847F94F1DBE0DAA00A18965 /* AppDelegate.swift */; };
-		9847F9521DBE0DAA00A18965 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9847F9511DBE0DAA00A18965 /* ViewController.swift */; };
 		9847F9551DBE0DAA00A18965 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9847F9531DBE0DAA00A18965 /* Main.storyboard */; };
 		9847F9571DBE0DAA00A18965 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9847F9561DBE0DAA00A18965 /* Assets.xcassets */; };
 		9847F95A1DBE0DAA00A18965 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9847F9581DBE0DAA00A18965 /* LaunchScreen.storyboard */; };
@@ -19,7 +18,6 @@
 /* Begin PBXFileReference section */
 		9847F94C1DBE0DAA00A18965 /* TouchTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TouchTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9847F94F1DBE0DAA00A18965 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		9847F9511DBE0DAA00A18965 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9847F9541DBE0DAA00A18965 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9847F9561DBE0DAA00A18965 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9847F9591DBE0DAA00A18965 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -59,7 +57,6 @@
 			isa = PBXGroup;
 			children = (
 				9847F94F1DBE0DAA00A18965 /* AppDelegate.swift */,
-				9847F9511DBE0DAA00A18965 /* ViewController.swift */,
 				9847F9531DBE0DAA00A18965 /* Main.storyboard */,
 				9847F9561DBE0DAA00A18965 /* Assets.xcassets */,
 				9847F9581DBE0DAA00A18965 /* LaunchScreen.storyboard */,
@@ -142,7 +139,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9847F9621DBE0F4900A18965 /* Line.swift in Sources */,
-				9847F9521DBE0DAA00A18965 /* ViewController.swift in Sources */,
 				9847F9641DBE0FDC00A18965 /* DrawView.swift in Sources */,
 				9847F9501DBE0DAA00A18965 /* AppDelegate.swift in Sources */,
 			);
@@ -296,6 +292,7 @@
 				9847F9601DBE0DAA00A18965 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
