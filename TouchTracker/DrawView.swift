@@ -12,6 +12,14 @@ class DrawView: UIView {
     
     var currentLines = [NSValue:Line]()
     var finishedLines = [Line]()
+    var selectedLineIndex: Int? {
+        didSet {
+            if selectedLineIndex == nil {
+                let menu = UIMenuController.sharedMenuController()
+                menu.setMenuVisible(false, animated: true)
+            }
+        }
+    }
     
     @IBInspectable var finishedLineColour: UIColor = UIColor.blackColor() {
         didSet {
@@ -44,13 +52,46 @@ class DrawView: UIView {
         addGestureRecognizer(tapRecogniser)
     }
     
+    override func canBecomeFirstResponder() -> Bool {
+        return true
+    }
+    
     func tap(gestureRecogniser: UIGestureRecognizer) {
-        print("Tap recognised")
+        let point = gestureRecogniser.locationInView(self)
+        selectedLineIndex = indexOfSelectedLine(point)
+        
+        let menu = UIMenuController.sharedMenuController()
+        
+        if selectedLineIndex != nil {
+            //Make DrawView the target of menu item actions
+            becomeFirstResponder()
+            
+            //Create a new delete UIMenuItem
+            let deleteItem = UIMenuItem(title: "Delete", action: #selector(deleteLine))
+            menu.menuItems = [deleteItem]
+            
+            //Tell the menu where it should come from and show it
+            menu.setTargetRect(CGRect(x: point.x, y: point.y, width: 2, height: 2), inView: self)
+            menu.setMenuVisible(true, animated: true)
+        } else {
+            //Hide the menu if no line is selected
+            menu.setMenuVisible(false, animated: true)
+        }
+        
+        setNeedsDisplay()
+    }
+    
+    func deleteLine() {
+        if let index = selectedLineIndex {
+            finishedLines.removeAtIndex(index)
+            selectedLineIndex = nil
+            setNeedsDisplay()
+        }
     }
     
     func doubleTap(gestureRecognizer: UIGestureRecognizer) {
         print("Recognised a double tap")
-        
+        selectedLineIndex = nil
         currentLines.removeAll(keepCapacity: false)
         finishedLines.removeAll(keepCapacity:  false)
         setNeedsDisplay()
@@ -72,10 +113,15 @@ class DrawView: UIView {
             strokeLine(line)
         }
         
-        
         currentLineColour.setStroke()
         for (_, line) in currentLines {
             strokeLine(line)
+        }
+        
+        if let index = selectedLineIndex {
+            UIColor.greenColor().setStroke()
+            let selectedLine = finishedLines[index]
+            strokeLine(selectedLine)
         }
     }
     
@@ -128,7 +174,25 @@ class DrawView: UIView {
         setNeedsDisplay()
     }
     
-    
+    func indexOfSelectedLine(point: CGPoint) -> Int? {
+        //find a line close to a point
+        for(index, line) in finishedLines.enumerate() {
+            let begin = line.begin
+            let end = line.end
+            
+            for t in CGFloat(0).stride(to: 1.0, by: 0.05) {
+                let x = begin.x + ((end.x - begin.x) * t)
+                let y = begin.y + ((end.y - begin.y) * t)
+                
+                //if the tapped point is within 20 points return this line
+                if hypot(x - point.x, y - point.y) < 20.0 {
+                    return index
+                }
+            }
+        }
+        //if nothing is close enough to the tapped point then we didn't select a line
+        return nil
+    }
     
     
     
