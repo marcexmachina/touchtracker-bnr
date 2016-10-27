@@ -10,12 +10,55 @@ import UIKit
 
 class DrawView: UIView {
     
-    var currentLine: Line?
+    var currentLines = [NSValue:Line]()
     var finishedLines = [Line]()
+    
+    @IBInspectable var finishedLineColour: UIColor = UIColor.blackColor() {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+    
+    @IBInspectable var currentLineColour: UIColor = UIColor.redColor() {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+    
+    @IBInspectable var lineThickness: CGFloat = 10 {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        let doubleTapRecogniser = UITapGestureRecognizer(target: self, action: #selector(doubleTap))
+        doubleTapRecogniser.numberOfTapsRequired = 2
+        doubleTapRecogniser.delaysTouchesBegan = true
+        addGestureRecognizer(doubleTapRecogniser)
+        
+        let tapRecogniser = UITapGestureRecognizer(target: self, action: #selector(tap))
+        tapRecogniser.delaysTouchesBegan = true
+        tapRecogniser.requireGestureRecognizerToFail(doubleTapRecogniser)
+        addGestureRecognizer(tapRecogniser)
+    }
+    
+    func tap(gestureRecogniser: UIGestureRecognizer) {
+        print("Tap recognised")
+    }
+    
+    func doubleTap(gestureRecognizer: UIGestureRecognizer) {
+        print("Recognised a double tap")
+        
+        currentLines.removeAll(keepCapacity: false)
+        finishedLines.removeAll(keepCapacity:  false)
+        setNeedsDisplay()
+    }
     
     func strokeLine(line: Line) {
         let path = UIBezierPath()
-        path.lineWidth = 10
+        path.lineWidth = lineThickness
         path.lineCapStyle = CGLineCap.Round
         
         path.moveToPoint(line.begin)
@@ -24,51 +67,66 @@ class DrawView: UIView {
     }
     
     override func drawRect(rect: CGRect) {
-        UIColor.blackColor().setStroke()
+        finishedLineColour.setStroke()
         for line in finishedLines {
             strokeLine(line)
         }
         
-        if let line = currentLine {
-            UIColor.redColor().setStroke()
+        
+        currentLineColour.setStroke()
+        for (_, line) in currentLines {
             strokeLine(line)
         }
     }
     
     // MARK: UIResponders
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let touch = touches.first!
+        print(#function)
         
-        //get location of touch in views coordinate system
-        let location = touch.locationInView(self)
-        currentLine = Line(begin: location, end: location)
+        for touch in touches {
+            let location = touch.locationInView(self)
+            let newLine = Line(begin: location, end: location)
+            let key = NSValue(nonretainedObject: touch)
+            currentLines[key] = newLine
+        }
         
         setNeedsDisplay()
     }
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        let touch = touches.first!
+        print(#function)
         
-        let location = touch.locationInView(self)
-        currentLine?.end = location
+        for touch in touches {
+            let key = NSValue(nonretainedObject: touch)
+            currentLines[key]?.end = touch.locationInView(self)
+        }
         
         setNeedsDisplay()
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if var line = currentLine {
-            let touch = touches.first!
-            let location = touch.locationInView(self)
-            line.end = location
+        print(#function)
+        
+        for touch in touches {
+            let key = NSValue(nonretainedObject: touch)
+            if var line = currentLines[key] {
+                line.end = touch.locationInView(self)
+                finishedLines.append(line)
+                currentLines.removeValueForKey(key)
+            }
             
-            finishedLines.append(line)
         }
-        currentLine = nil
+        
         setNeedsDisplay()
     }
     
     
-    
+    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+        print(#function)
+        
+        currentLines.removeAll()
+        setNeedsDisplay()
+    }
     
     
     
