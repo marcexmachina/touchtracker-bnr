@@ -14,6 +14,7 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
     var finishedLines = [Line]()
     var moveRecogniser = UIPanGestureRecognizer()
     var longPressRecogniser = UILongPressGestureRecognizer()
+    var magnitude: CGFloat = 0.0
     
     var selectedLineIndex: Int? {
         didSet {
@@ -162,7 +163,7 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
     
     func strokeLine(line: Line) {
         let path = UIBezierPath()
-        path.lineWidth = lineThickness
+        path.lineWidth = line.width
         path.lineCapStyle = CGLineCap.Round
         
         path.moveToPoint(line.begin)
@@ -194,7 +195,7 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
         
         for touch in touches {
             let location = touch.locationInView(self)
-            let newLine = Line(begin: location, end: location)
+            let newLine = Line(begin: location, end: location, width: 10.0)
             let key = NSValue(nonretainedObject: touch)
             currentLines[key] = newLine
         }
@@ -208,6 +209,18 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
         for touch in touches {
             let key = NSValue(nonretainedObject: touch)
             currentLines[key]?.end = touch.locationInView(self)
+            
+            var width = currentLines[key]?.width
+            let velocity = moveRecogniser.velocityInView(self)
+            magnitude = sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y))
+            
+            if magnitude > 100.0 && magnitude < 500.0 {
+                width = 20.0
+            } else if magnitude >= 500.0 {
+                width = 30.0
+            }
+            
+            currentLines[key]?.width = width!
         }
         
         setNeedsDisplay()

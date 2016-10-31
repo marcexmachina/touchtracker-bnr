@@ -11,4 +11,5 @@ import CoreGraphics
 struct Line {
     var begin = CGPoint.zero
     var end = CGPoint.zero
+    var width: CGFloat = 0.0
 }
