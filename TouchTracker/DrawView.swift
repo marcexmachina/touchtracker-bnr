@@ -13,6 +13,8 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
     var currentLines = [NSValue:Line]()
     var finishedLines = [Line]()
     var moveRecogniser = UIPanGestureRecognizer()
+    var longPressRecogniser = UILongPressGestureRecognizer()
+    
     var selectedLineIndex: Int? {
         didSet {
             if selectedLineIndex == nil {
@@ -52,7 +54,7 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
         tapRecogniser.requireGestureRecognizerToFail(doubleTapRecogniser)
         addGestureRecognizer(tapRecogniser)
         
-        let longPressRecogniser = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
+        longPressRecogniser = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
         addGestureRecognizer(longPressRecogniser)
         
         moveRecogniser = UIPanGestureRecognizer(target: self, action: #selector(moveLine))
@@ -118,6 +120,8 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
             
             if selectedLineIndex != nil {
                 currentLines.removeAll()
+                let menu = UIMenuController.sharedMenuController()
+                menu.setMenuVisible(false, animated: true)
             }
         } else if gestureRecogniser.state == .Ended {
             selectedLineIndex = nil
@@ -128,6 +132,10 @@ class DrawView: UIView , UIGestureRecognizerDelegate{
     
     func moveLine(gestureRecogniser: UIPanGestureRecognizer) {
         print("Recognised a pan")
+        
+        if longPressRecogniser.state != .Changed {
+            return
+        }
         
         //A line must be selected
         if let index = selectedLineIndex {
